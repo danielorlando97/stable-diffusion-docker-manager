@@ -97,6 +97,7 @@ def log_validation(text_encoder, tokenizer, unet, vae, args, accelerator, weight
         vae=vae,
         revision=args.revision,
         torch_dtype=weight_dtype,
+        use_auth_token=args.hub_token
     )
     pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
     pipeline = pipeline.to(accelerator.device)
@@ -585,18 +586,18 @@ def main():
 
     # Load tokenizer
     if args.tokenizer_name:
-        tokenizer = CLIPTokenizer.from_pretrained(args.tokenizer_name)
+        tokenizer = CLIPTokenizer.from_pretrained(args.tokenizer_name, use_auth_token=args.hub_token)
     elif args.pretrained_model_name_or_path:
-        tokenizer = CLIPTokenizer.from_pretrained(args.pretrained_model_name_or_path, subfolder="tokenizer")
+        tokenizer = CLIPTokenizer.from_pretrained(args.pretrained_model_name_or_path, subfolder="tokenizer", use_auth_token=args.hub_token)
 
     # Load scheduler and models
-    noise_scheduler = DDPMScheduler.from_pretrained(args.pretrained_model_name_or_path, subfolder="scheduler")
+    noise_scheduler = DDPMScheduler.from_pretrained(args.pretrained_model_name_or_path, subfolder="scheduler", use_auth_token=args.hub_token)
     text_encoder = CLIPTextModel.from_pretrained(
-        args.pretrained_model_name_or_path, subfolder="text_encoder", revision=args.revision
+        args.pretrained_model_name_or_path, subfolder="text_encoder", revision=args.revision, use_auth_token=args.hub_token
     )
-    vae = AutoencoderKL.from_pretrained(args.pretrained_model_name_or_path, subfolder="vae", revision=args.revision)
+    vae = AutoencoderKL.from_pretrained(args.pretrained_model_name_or_path, subfolder="vae", revision=args.revision, use_auth_token=args.hub_token)
     unet = UNet2DConditionModel.from_pretrained(
-        args.pretrained_model_name_or_path, subfolder="unet", revision=args.revision
+        args.pretrained_model_name_or_path, subfolder="unet", revision=args.revision, use_auth_token=args.hub_token
     )
 
     # Add the placeholder token in tokenizer
@@ -872,6 +873,7 @@ def main():
                 vae=vae,
                 unet=unet,
                 tokenizer=tokenizer,
+                use_auth_token=args.hub_token
             )
             pipeline.save_pretrained(args.output_dir)
         # Save the newly trained embeddings
