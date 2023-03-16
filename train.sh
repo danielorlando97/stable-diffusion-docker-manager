@@ -8,7 +8,7 @@ accelerate launch train.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --train_data_dir=$DATA_DIR \
   --learnable_property="object" \
-  --placeholder_token="<target>" --initializer_token="toy" \
+  --placeholder_token="<target>" --initializer_token="chocolate cereal ball" \
   --resolution=512 \
   --train_batch_size=1 \
   --gradient_accumulation_steps=4 \
@@ -17,4 +17,4 @@ accelerate launch train.py \
   --lr_scheduler="constant" \
   --lr_warmup_steps=0 \
   --output_dir="textual_inversion_target" \
-  --hub_token="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"
+  --hub_token="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" | tee output.txt
